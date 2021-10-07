@@ -1,0 +1,152 @@
+<template>
+  <v-container fluid fill-height>
+    <ConfirmDlg ref="confirm" />
+    <LoadingDlg ref="loading" />
+    <ProductEditDialog ref="productedit" @save="saveItem"/>
+    <v-layout child-flex>
+      <v-data-table
+        :headers="headers"
+        :items="products"
+        :search="search"
+        show-select
+        sort-by="name"
+        class="elevation-1"
+      >
+        <template v-slot:top>
+          <v-toolbar flat>
+            <v-toolbar-title>Products</v-toolbar-title>
+            <v-divider class="mx-4" inset vertical></v-divider>
+
+            <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              label="Search"
+              single-line
+              hide-details
+            ></v-text-field>
+            <v-spacer></v-spacer>
+            <v-btn @click="realoadItems" color="primary" fab small dark>
+              <v-icon>mdi-refresh</v-icon>
+            </v-btn>
+            <v-divider class="mx-4" inset vertical></v-divider>
+            <v-btn @click="addItem" color="primary" fab small dark>
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
+          </v-toolbar>
+        </template>
+
+        <template v-slot:item.actions="{ item }">
+          <v-icon small class="mr-2" @click="editItem(item)">
+            mdi-pencil
+          </v-icon>
+          <v-icon small @click="deleteItem(item)">
+            mdi-delete
+          </v-icon>
+        </template>
+
+        <template v-slot:no-data>
+          <v-btn color="primary" @click="initialize">
+            Reset
+          </v-btn>
+        </template>
+      </v-data-table>
+    </v-layout>
+  </v-container>
+</template>
+
+<script>
+import UserService from '../services/user.service';
+
+export default {
+  name: 'Products',
+  data() {
+    return {
+      search: '',
+      headers: [
+        // { text: 'Id', align: 'start', filterable: false, value: 'id' },
+        { text: 'name', value: 'name' },
+        { text: 'description', value: 'description' },
+        { text: 'active', value: 'active' },
+        { text: 'stock', value: 'stock' },
+        { text: 'stockUnit', value: 'stockUnit' },
+        { text: 'barCode', value: 'barCode' },
+        { text: 'articleNumber', value: 'articleNumber' },
+        { text: 'price', value: 'price' },
+        { text: 'supplier', value: 'supplier' },
+        // { text: 'createdAt', value: 'createdAt' },
+        { text: 'updatedAt', value: 'updatedAt' },
+        { text: 'Actions', value: 'actions', sortable: false }
+      ],
+      products: [],
+      editedIndex: -1,
+      editedItem: {},
+      defaultItem: {},
+      errorcontent: ''
+    };
+  },
+
+  methods: {
+    initialize() {},
+    getColor(calories) {
+      if (calories > 500) return 'red';
+      else if (calories < 50) return 'orange';
+      else return 'green';
+    },
+    async delRecord() {},
+
+    realoadItems(){
+      alert("not yet implemented");
+
+    },
+
+    addItem(){
+      this.$refs.productedit.open();
+    },
+
+    editItem(item) {
+      this.editedIndex = this.products.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialog = true;
+    },
+    saveItem(data){
+      alert('valid form data' + JSON.stringify(data));
+    },
+
+    deleteItem(item) {
+      
+      this.editedIndex = this.products.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+
+      this.$refs.confirm
+        .open('Delete Product', 'Are you sure?')
+        .then(confirm => {
+          if (confirm) this.deleteRecord(this.editedItem);
+        });
+    },
+
+    deleteRecord(item) {
+      alert('iterm deleted:' + JSON.stringify(item));
+    },
+
+    deleteItemConfirm() {
+      this.products.splice(this.editedIndex, 1);
+      this.closeDelete();
+    }
+  },
+  mounted() {
+    UserService.getProducts().then(
+      response => {
+        this.products = response.data;
+      },
+      error => {
+        this.errorcontent =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+      }
+    );
+  }
+};
+</script>
