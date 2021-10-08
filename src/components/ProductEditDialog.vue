@@ -18,6 +18,7 @@
           </v-text-field>
           <v-textarea
             v-model="product.description"
+            rows="2"
             label="description"
             type="text"
             prepend-icon="mdi-all-inclusive"

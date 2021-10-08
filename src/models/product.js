@@ -15,9 +15,9 @@ export default class Product {
         var newProduct = new Product();
         newProduct.name = '';
         newProduct.description = '';
-        newProduct.active = false;
+        newProduct.active = true;
         newProduct.stock = 0;
-        newProduct.stockUnit = '';
+        newProduct.stockUnit = 'st';
         newProduct.barcode = '';
         newProduct.articleNumber = '';
         newProduct.price = 0;

@@ -3,6 +3,7 @@
     <ConfirmDlg ref="confirm" />
     <LoadingDlg ref="loading" />
     <ProductEditDialog ref="productedit" @save="saveItem"/>
+    <Toast ref="toast" />
     <v-layout child-flex>
       <v-data-table
         :headers="headers"
@@ -55,7 +56,8 @@
 </template>
 
 <script>
-import UserService from '../services/user.service';
+//import UserService from '../services/user.service';
+import ProductService from '../services/product.service';
 
 export default {
   name: 'Products',
@@ -85,8 +87,18 @@ export default {
     };
   },
 
+  created() {
+    this.listProducts();
+  },
+
+  mounted() {
+    this.listProducts();
+  },
+
   methods: {
-    initialize() {},
+    initialize() {
+      this.listProducts();
+    },
     getColor(calories) {
       if (calories > 500) return 'red';
       else if (calories < 50) return 'orange';
@@ -95,7 +107,8 @@ export default {
     async delRecord() {},
 
     realoadItems(){
-      alert("not yet implemented");
+      //alert("not yet implemented");
+      this.$refs.toast.show("warning","reloading data");
 
     },
 
@@ -109,7 +122,7 @@ export default {
       this.dialog = true;
     },
     saveItem(data){
-      alert('valid form data' + JSON.stringify(data));
+      this.saveProduct(data);
     },
 
     deleteItem(item) {
@@ -131,10 +144,10 @@ export default {
     deleteItemConfirm() {
       this.products.splice(this.editedIndex, 1);
       this.closeDelete();
-    }
-  },
-  mounted() {
-    UserService.getProducts().then(
+    },
+    
+    listProducts(){
+      ProductService.getProducts().then(
       response => {
         this.products = response.data;
       },
@@ -145,8 +158,35 @@ export default {
             error.response.data.message) ||
           error.message ||
           error.toString();
+          this.$refs.toast.show("error",this.errorcontent,0);
       }
     );
-  }
+
+    },
+
+    async saveProduct(product){
+      this.$refs.loading.show();
+      await new Promise(resolve => setTimeout(resolve, 3000)); // 3 sec
+      ProductService.postProduct(product).then(
+      response => {
+        this.$refs.toast.show("success",response.data,1500);
+        this.listProducts();
+        this.$refs.loading.hide();
+      },
+      error => {
+        this.errorcontent =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+          this.$refs.toast.show("error",this.errorcontent,0);
+          this.$refs.loading.hide();
+      }
+    ).finally(function() { this.$refs.loading.hide();});
+    }
+
+  },
+  
 };
 </script>
