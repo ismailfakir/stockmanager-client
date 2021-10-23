@@ -34,9 +34,14 @@
               </v-list-item-content>
             </v-list-item>
           </template>
-          <v-list-item v-for="(child, i) in item.children" :key="i" link :to="child.link">
+          <v-list-item
+            v-for="(child, i) in item.children"
+            :key="i"
+            link
+            :to="child.link"
+          >
             <v-list-item-action v-if="child.icon">
-              <v-icon dark>{{ child.icon }}</v-icon>
+              <v-icon dark color="accent">{{ child.icon }}</v-icon>
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>
@@ -57,7 +62,6 @@
         </v-list-item>
       </template>
     </v-list>
-    
   </v-navigation-drawer>
 </template>
 <script>
@@ -75,20 +79,21 @@ export default {
       mini: false,
       items: [
         { icon: '$home', text: 'Home', link: '/home' },
-        { icon: 'mdi-tray-full', text: 'Test', link: '/test' },
-       
+        //{ icon: 'mdi-tray-full', text: 'Test', link: '/test' },
+
         {
           icon: '$uparrow',
           'icon-alt': '$downarrow',
           text: 'Product',
           model: true,
           children: [
-            { icon: 'mdi-tray-full', text: 'Product List', link: '/products' },
-            { icon: '$item', text: 'Barcode' , link: '/barcodes'},
-            { icon: '$item', text: 'Stock', link: '/stocks' }
+            { icon: 'mdi-format-list-bulleted-square', text: 'Product List', link: '/products' },
+            { icon: 'mdi-barcode-scan', text: 'Barcode', link: '/barcodes' },
+            { icon: 'mdi-chart-bar', text: 'Stock', link: '/stocks' }
           ]
         },
-         { icon: '$contacts', text: 'Contact Us', link: '/contact' }
+        { icon: '$user', text: 'Profile', link: '/profile' },
+        { icon: '$contacts', text: 'Contact Us', link: '/contact' }
       ]
     };
   },

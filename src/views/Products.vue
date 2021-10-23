@@ -2,7 +2,7 @@
   <v-container fluid fill-height>
     <ConfirmDlg ref="confirm" />
     <LoadingDlg ref="loading" />
-    <ProductEditDialog ref="productedit" @save="saveItem"/>
+    <ProductEditDialog ref="productedit" @save="saveItem" />
     <Toast ref="toast" />
     <v-layout child-flex>
       <v-data-table
@@ -106,87 +106,157 @@ export default {
     },
     async delRecord() {},
 
-    realoadItems(){
+    realoadItems() {
       //alert("not yet implemented");
-      this.$refs.toast.show("warning","reloading data");
-
+      //this.$refs.toast.show('warning', 'reloading data');
+      this.listProducts();
     },
 
-    addItem(){
+    addItem() {
       this.$refs.productedit.open();
     },
 
     editItem(item) {
       this.editedIndex = this.products.indexOf(item);
       this.editedItem = Object.assign({}, item);
-      this.dialog = true;
+      this.$refs.productedit.editOpen(this.editedItem);
     },
-    saveItem(data){
-      this.saveProduct(data);
+    saveItem(data) {
+      if (data.hasOwnProperty('id')) {
+        this.updateProduct(data);
+      } else {
+        this.saveProduct(data);
+      }
     },
 
     deleteItem(item) {
-      
       this.editedIndex = this.products.indexOf(item);
       this.editedItem = Object.assign({}, item);
 
       this.$refs.confirm
-        .open('Delete Product', 'Are you sure?')
+        .open(
+          'Delete Product',
+          'Are you sure to delete product: ' + item.name + '?'
+        )
         .then(confirm => {
           if (confirm) this.deleteRecord(this.editedItem);
         });
     },
 
     deleteRecord(item) {
-      alert('iterm deleted:' + JSON.stringify(item));
+      this.deleteProduct(item);
     },
 
     deleteItemConfirm() {
       this.products.splice(this.editedIndex, 1);
       this.closeDelete();
     },
-    
-    listProducts(){
-      ProductService.getProducts().then(
-      response => {
-        this.products = response.data;
-      },
-      error => {
-        this.errorcontent =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-          this.$refs.toast.show("error",this.errorcontent,0);
-      }
-    );
 
+    async listProducts() {
+      this.$refs.loading.show();
+      await new Promise(resolve => setTimeout(resolve, 1000)); // 1 sec
+      ProductService.getProducts()
+        .then(
+          response => {
+            this.products = response.data;
+            this.$refs.loading.hide();
+          },
+          error => {
+            this.errorcontent =
+              (error.response &&
+                error.response.data &&
+                error.response.data.message) ||
+              error.message ||
+              error.toString();
+            this.$refs.toast.show('error', this.errorcontent, 0);
+            this.$refs.loading.hide();
+          }
+        )
+        .finally(function() {
+          this.$refs.loading.hide();
+        });
     },
 
-    async saveProduct(product){
+    async saveProduct(product) {
       this.$refs.loading.show();
-      await new Promise(resolve => setTimeout(resolve, 3000)); // 3 sec
-      ProductService.postProduct(product).then(
-      response => {
-        this.$refs.toast.show("success",response.data,1500);
-        this.listProducts();
-        this.$refs.loading.hide();
-      },
-      error => {
-        this.errorcontent =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-          this.$refs.toast.show("error",this.errorcontent,0);
+      await new Promise(resolve => setTimeout(resolve, 1000)); // 1 sec
+      ProductService.postProduct(product)
+        .then(
+          response => {
+            this.$refs.toast.show('success', response.data, 1500);
+            this.listProducts();
+            this.$refs.loading.hide();
+          },
+          error => {
+            this.errorcontent =
+              (error.response &&
+                error.response.data &&
+                error.response.data.message) ||
+              error.message ||
+              error.toString();
+            this.$refs.toast.show('error', this.errorcontent, 0);
+            this.$refs.loading.hide();
+          }
+        )
+        .finally(function() {
           this.$refs.loading.hide();
-      }
-    ).finally(function() { this.$refs.loading.hide();});
-    }
+        });
+    },
 
-  },
-  
+    async updateProduct(data) {
+      this.$refs.loading.show();
+      await new Promise(resolve => setTimeout(resolve, 1000)); // 1 sec
+
+      let id = data.id;
+
+      ProductService.putProduct(id, data)
+        .then(
+          response => {
+            this.$refs.toast.show('success', response.data.message, 1500);
+            this.listProducts();
+            this.$refs.loading.hide();
+          },
+          error => {
+            this.errorcontent =
+              (error.response &&
+                error.response.data &&
+                error.response.data.message) ||
+              error.message ||
+              error.toString();
+            this.$refs.toast.show('error', this.errorcontent, 0);
+            this.$refs.loading.hide();
+          }
+        )
+        .finally(function() {
+          this.$refs.loading.hide();
+        });
+    },
+
+    async deleteProduct(product) {
+      this.$refs.loading.show();
+      await new Promise(resolve => setTimeout(resolve, 1000)); // 1 sec
+      ProductService.deleteProduct(product.id)
+        .then(
+          response => {
+            this.$refs.toast.show('success', response.data.message, 2000);
+            this.listProducts();
+            this.$refs.loading.hide();
+          },
+          error => {
+            this.errorcontent =
+              (error.response &&
+                error.response.data &&
+                error.response.data.message) ||
+              error.message ||
+              error.toString();
+            this.$refs.toast.show('error', this.errorcontent, 0);
+            this.$refs.loading.hide();
+          }
+        )
+        .finally(function() {
+          this.$refs.loading.hide();
+        });
+    }
+  } // method end
 };
 </script>

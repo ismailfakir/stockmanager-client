@@ -3,6 +3,7 @@
     v-model="show"
     :max-width="options.width"
     :style="{ zIndex: options.zIndex }"
+    transition="dialog-top-transition"
     @keydown.esc="cancel"
   >
     <v-card>
@@ -12,8 +13,8 @@
       <v-card-text v-show="!!message" class="pa-4">{{ message }}</v-card-text>
       <v-card-actions class="pt-0">
         <v-spacer></v-spacer>
-        <v-btn @click.native="agree" color="primary darken-1" text>Yes</v-btn>
-        <v-btn @click.native="cancel" color="grey" text>Cancel</v-btn>
+        <v-btn @click.native="agree" color="success" outlined>Yes</v-btn>
+        <v-btn @click.native="cancel" color="error" outlined>Cancel</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -57,8 +58,8 @@ export default {
     message: null,
     title: null,
     options: {
-      color: 'primary',
-      width: 290,
+      color: 'info',
+      width: 490,
       zIndex: 200
     }
   }),

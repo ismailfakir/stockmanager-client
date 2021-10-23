@@ -116,12 +116,24 @@ export default {
     }
   },
 
+  created() {
+    //Object.assign(this.product, Product.empty());
+  },
+
   methods: {
     open() {
+      Object.assign(this.product, Product.empty());
       this.dialog = true;
     },
+    editOpen(item) {
+      this.dialog = true;
+       Object.assign(this.product, item);
+    },
     close() {
+      Object.assign(this.product, Product.empty());
+      this.valid = true
       this.dialog = false;
+      this.resetValidation()
     },
     save() {
       this.dialog = false;

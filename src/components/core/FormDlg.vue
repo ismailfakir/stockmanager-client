@@ -144,17 +144,3 @@
         }
     }
 </script>
-<style lang="scss">
-    @import '../../assets/styles/_variables.scss'; // Using this should get you the variables
-    
-    .dialog-title {
-        color: $dialog-header-text-color;
-        background-color: $dialog-header-background-color;
-    }
-    .dialog-action{
-        background: $dialog-action-background-color;
-    }
-    .dialog-body{
-        background: $dialog-body-background-color;
-    }
-</style>

@@ -13,7 +13,6 @@ import ProductEditDialog from '../components/ProductEditDialog.vue';
 import Toast from '../components/core/Toast.vue';
 
 
-
 function setupComponents(Vue){
   Vue.component('toolbar', Toolbar);
   Vue.component('navigation', Navigation);

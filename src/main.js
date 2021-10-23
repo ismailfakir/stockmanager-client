@@ -20,7 +20,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import dateMixin from './mixins/date';
-
+import UtilMixin from './mixins/util';
 library.add(faHome, faUser, faUserPlus, faSignInAlt, faSignOutAlt,faUserSecret);
 
 Vue.config.productionTip = false;
@@ -33,7 +33,8 @@ setupComponents(Vue);
 Vue.use(Vuex);
 
 // Globally
-Vue.mixin(dateMixin);
+Vue.mixin(dateMixin,UtilMixin);
+Vue.mixin(UtilMixin);
 
 new Vue({
   vuetify,

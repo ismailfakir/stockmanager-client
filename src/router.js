@@ -5,6 +5,8 @@ import Login from './views/Login.vue';
 import Register from './views/Register.vue';
 //import Products from './views/Products.vue';
 import Test from './views/Test.vue';
+import NotFound from './views/NotFound.vue';
+//import Stock from './views/Stocks.vue';
 
 Vue.use(Router);
 
@@ -61,7 +63,19 @@ export const router = new Router({
       name: 'products',
       // lazy-loaded
       component: () => import('./views/Products.vue')
-    }
+    },
+    {
+      path: '/stocks',
+      name: 'stocks',
+      // lazy-loaded
+      component: () => import('./views/Stocks.vue')
+    },
+    {
+      // catch all 404 - define at the very end
+      path: "*",
+      component: NotFound
+    },
+
   ]
 });
 
